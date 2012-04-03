@@ -1,5 +1,6 @@
 var util = require("util");
 var kvc = require("./keyvaluecoding.js").KeyValueCoding;
+var kvcs = require("./keyvaluecoding-simple.js").KeyValueCoding;
 
 function ok( condition, message ) {
     if ( condition ) {
@@ -58,5 +59,31 @@ var test_object = {
     }
 };
 
-debugger;
 ok( test_object.valueForKey("marlowe") === "christopher", "transparently invoke method" );
+ok( test_object.valueForKey("donne.bruce") === "brucey", "followed dot-path across invocation" );
+
+
+
+// simple
+
+// TODO:kd - auto-extend Array
+Array.prototype.valueForKey = kvcs.valueForKey;
+Array.prototype.valueForKeyPath = kvcs.valueForKeyPath;
+
+var foo = [ "banana", "mango", [ "fish", "paste" ] ];
+
+// Arrays
+ok( foo.valueForKey("1") === "mango", "pulled out by a number in a string" );
+ok( foo.valueForKey(1) === "mango", "pulled out by a number" );
+ok( foo.valueForKey("2").valueForKey("0") === "fish", "followed chain of strings" );
+ok( foo.valueForKey(2).valueForKey(0), "followed chain of numbers" );
+ok( foo.valueForKeyPath("2.0"), "parsed dot path" );
+
+
+// Dictionaries & Objects
+Object.prototype.valueForKey = kvcs.valueForKey;
+Object.prototype.valueForKeyPath = kvcs.valueForKeyPath;
+ok( test_object.valueForKey("marlowe") === "christopher", "transparently invoke method" );
+ok( test_object.valueForKeyPath("donne.bruce") === "brucey", "followed dot-path across invocation" );
+
+

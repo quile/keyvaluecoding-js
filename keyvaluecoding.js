@@ -127,7 +127,8 @@ var __keyValueCoding = {
                 return values;
             }
         }
-        return obj[key];
+
+        return __keyValueCoding.__valueForKey.apply( obj, [ key ] );
     },
 
     __setValue_forKey_onObject: function(v, key, obj) {
