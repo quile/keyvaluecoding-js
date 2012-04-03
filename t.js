@@ -1,5 +1,5 @@
 var util = require("util");
-var kvc = require("./keyvaluecoding.js").KeyValueCoding;
+var kvc = require("./keyvaluecoding-complex.js").KeyValueCoding;
 var kvcs = require("./keyvaluecoding-simple.js").KeyValueCoding;
 
 function ok( condition, message ) {
