@@ -1,5 +1,5 @@
 /* --------------------------------------------------------------------
- * keyvaluecoding.js
+ * keyvaluecoding-complex.js
  * --------------------------------------------------------------------
  * The MIT License
  *
@@ -24,8 +24,7 @@
  * THE SOFTWARE.
  */
 
-var util = require("util");
-var KVU = require('./keyvalueutilities.js');
+var KVU = require('./keyvalueutilities');
 
 var DOT_OR_PARENTHESIS = new RegExp("[\.\(]");
 
@@ -41,9 +40,8 @@ var __keyValueCoding = {
             return __keyValueCoding.__setValue_forKeyPath.apply( self, [ v, key ] );
         }
 
-        var setMethodName = "set" + KVU._p_ucfirst(KVU._p_niceName(key)) + ":";
+        var setMethodName = "set" + KVU._p_ucfirst(KVU._p_niceName(key));
         if ( KVU._p_can( self, setMethodName ) ) {
-            util.log( "Object can " + setMethodName + ", using it to set value " + value );
             self[setMethodName].apply(self, [v]);
             return;
         }
@@ -81,10 +79,8 @@ var __keyValueCoding = {
     __valueForKeyPathElement_onObject: function( keyPathElement, obj ) {
         var self = this;
         if ( !obj ) {
-            //util.error( "Looking for " + keyPathElement + " on null" );
             return null;
         }
-        //util.log( "Looking for " + keyPathElement + " on object " + obj );
         var key = keyPathElement['key'];
         if ( !keyPathElement['arguments'] ) {
             return __keyValueCoding.__valueForKey_onObject.apply(self, [ key, obj ] );
@@ -274,16 +270,16 @@ var __keyValueCoding = {
         return (a === b);
     },
 
-    // Stole this from Craig's tagAttribute code.  It takes a string template
+    // This takes a string template
     // like "foo fah fum ${twiddle.blah.zap} tiddly pom" and a language (which
     // you can use in your evaluations) and returns the string with the
     // resolved keypaths interpolated.
-    __string_withEvaluatedKeyPathsInLanguage: function(str, language) {
+    __stringWithEvaluatedKeyPathsInLanguage: function(str, language) {
         var self = this;
         if (!str) { return "" }
         var count = 0;
-        var TEMPLATE_RE = new RegExp("\$\{([^}]+)\}", "g");
-        var match = str.match(TEMPLATE_RE);
+        var TEMPLATE_RE = new RegExp("\\${(.*?)}");
+        var match = str.match( TEMPLATE_RE );
         while (match) {
             var keyValuePath = match[1];
             var v = "";
@@ -291,15 +287,15 @@ var __keyValueCoding = {
             if ( KVU.expressionIsKeyPath( keyValuePath )) {
                 v = __keyValueCoding.__valueForKeyPath.apply( self, [ keyValuePath ] );
             } else {
-                v = eval(keyValuePath); // yikes, dangerous!
+                v = eval( keyValuePath ); // yikes, dangerous!
             }
 
-            //\Q and \E makes the regex ignore the inbetween values if they have regex special items which we probably will for the dots (.).
-            var re = new RegExp("\$\{" + KVU._p_quotemeta( keyValuePath ) + "\}", "g");
-            str = str.replace(re, v);
-            //Avoiding the infinite loop...just in case
+            // \Q and \E makes the regex ignore the inbetween values if they have regex special items which we probably will for the dots (.).
+            var re = new RegExp("\\$\{" + KVU._p_quotemeta( keyValuePath ) + "\}", "g");
+            str = str.replace( re, v );
+            // Avoiding the infinite loop...just in case
             if (count++ > 100) { break }
-            match = str.match(TEMPLATE_RE);
+            match = str.match( TEMPLATE_RE );
         }
         return str;
     }
@@ -316,5 +312,6 @@ exports.KeyValueCoding = {
     setValueForKey:     __keyValueCoding.__setValue_forKey,
     valueForKeyPath:    __keyValueCoding.__valueForKeyPath,
     setValueForKeyPath: __keyValueCoding.__setValue_forKeyPath,
+    stringWithEvaluatedKeyPathsInLanguage: __keyValueCoding.__stringWithEvaluatedKeyPathsInLanguage,
 };
 

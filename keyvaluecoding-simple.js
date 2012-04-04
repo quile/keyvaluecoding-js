@@ -24,8 +24,7 @@
  * THE SOFTWARE.
 **/
 
-var util = require("util");
-var KVU  = require("./keyvalueutilities.js");
+var KVU  = require("./keyvalueutilities");
 
 // This is the way it is because it was ported from
 // a couple of different places from a couple of
@@ -46,11 +45,11 @@ var __keyValueCoding = {
         var self = this;
         key = key.toString();
         var setter = "set" + KVU._p_ucfirst( key );
-        var f = self[setter];
-        if ( typeof f === "function" ) {
-            return f.apply( self, [ value ] );
+        var s = self[setter];
+        if ( typeof s === "function" ) {
+            return s.apply( self, [ value ] );
         }
-        self[key] = value;
+        return self[key] = value;
     },
     __valueForKeyPath: function( keyPath ) {
         var self = this;

@@ -1,4 +1,6 @@
 /* --------------------------------------------------------------------
+ * keyvalueutilities.js
+ * --------------------------------------------------------------------
  * The MIT License
  *
  * Copyright (c) 2012 kd
@@ -29,17 +31,17 @@
 
 var util = require("util");
 
-exports._p_length = function(thing) {
+_p_length = function(thing) {
     if (!thing) { return null }
     return thing.length;
 };
 
-exports._p_keys = function(thing) {
+_p_keys = function(thing) {
     if (!thing) { return [] }
     return Object.keys(thing);
 };
 
-exports._p_values = function(thing) {
+_p_values = function(thing) {
     // if this is an objj object, send it an allKeys message
     if (!thing) { return [] }
     var values = [];
@@ -49,7 +51,7 @@ exports._p_values = function(thing) {
     return values;
  };
 
-exports._p_push = function(a, thing) {
+_p_push = function(a, thing) {
     if (!a) { return }
     a[a.length] = thing;
 };
@@ -65,19 +67,16 @@ _p_2_split = function(re, st) {
     if (first == "") { return [] }
     return [first];
 };
-exports._p_2_split = _p_2_split;
 
 _p_lcfirst = function(str) {
     return str.substr(0, 1).toLowerCase() + str.substr(1, str.length);
 };
-exports._p_lcfirst = _p_lcfirst;
 
 _p_ucfirst = function(str) {
     return str.substr(0, 1).toUpperCase() + str.substr(1, str.length);
 };
-exports._p_ucfirst = _p_ucfirst;
 
-exports._p_niceName = function(name) {
+_p_niceName = function(name) {
     if (name.match(/^[A-Z0-9_]+$/)) {
          return _p_lcfirst(name.split("_").map(function (_u) { return _p_ucfirst(_u.toLowerCase()) }).join(""));
     }
@@ -87,21 +86,19 @@ exports._p_niceName = function(name) {
 _p_quotemeta = function(str) {
     return str.replace( /([^A-Za-z0-9])/g , "\\$1" );
 }
-exports._p_quotemeta = _p_quotemeta;
 
 _p_trim = function(str) {
     return str.replace(/^\s+/, "").replace(/\s+$/, "");
 }
-exports._p_trim = _p_trim;
 
-exports._p_can = function(object, method) {
+_p_can = function(object, method) {
     if ( typeof object[method] === 'function' ) {
         return true;
     }
     return false;
 }
 
-exports._p_keyNameFromNiceName = function(niceName) {
+_p_keyNameFromNiceName = function(niceName) {
     var pieces = niceName.split(/([A-Z0-9])/);
     var uppercasePieces = [];
 
@@ -143,29 +140,25 @@ _p_isArray = function( v ) {
     return false;
 };
 
-exports._p_isArray = _p_isArray;
-
-
 var KP_RE      = new RegExp('^[A-Za-z_\(\)]+[A-Za-z0-9_#\@\.\(\)\"]*$');
 var KP_RE_PLUS = new RegExp('^[A-Za-z_\(\)]+[A-Za-z0-9_#\@]*[\(\.]+');
 var QUOTE_RE   = new RegExp('["' + "']");
 var OPEN_RE    = new RegExp("[\[\{\(]");
 var KEY_RE     = new RegExp( "([a-zA-Z0-9_\@]+)\\(" );
 
-exports.expressionIsKeyPath = function( expression ) {
+expressionIsKeyPath = function( expression ) {
     if ( !expression ) { return false }
     if ( expression.match(KP_RE) ) { return true }
     return expression.match(KP_RE_PLUS);
 }
 
-exports.keyPathElementsForPath = function( path ) {
+keyPathElementsForPath = function( path ) {
     if ( !path.match(/\(/) ) {
         var bits = path.split(".");
         var elements = [];
         for ( var i = 0; i < bits.length; i++ ) {
             elements[elements.length] = { 'key': bits[i] };
         }
-        // util.log( util.format( "key path elements: %j", elements ));
         return elements;
     }
 
@@ -201,7 +194,6 @@ exports.keyPathElementsForPath = function( path ) {
         }
         if (!rest) { break }
     }
-    // util.log( util.format( "key path elements: %j", keyPathElements ));
     return keyPathElements;
 }
 
@@ -254,13 +246,12 @@ extractDelimitedChunk = function( chunk, terminator ) {
     if (isBalanced(balanced)) {
         return extracted;
     } else {
-        util.error( "Error parsing keypath chunk; unbalanced '" + unBalanced(balanced) + "'" );
+        // error - unbalanced
     }
     return "";
 }
-exports.extractDelimitedChunk;
 
-exports.isBalanced = function( balanced ) {
+isBalanced = function( balanced ) {
     for (var ch in balanced) {
         if (ch.match(OPEN_RE) && balanced[ch] != 0) { return false }
         if (ch.match(QUOTE_RE) && balanced[ch] % 2 != 0) { return false }
@@ -268,10 +259,35 @@ exports.isBalanced = function( balanced ) {
     return true;
 }
 
-exports.unBalanced = function( balanced ) {
+unBalanced = function( balanced ) {
     for (var ch in balanced) {
         if (ch.match(OPEN_RE) && balanced[ch] != 0) { return ch }
         if (ch.match(QUOTE_RE) && balanced[ch] % 2 != 0) { return ch }
     }
     return null;
 }
+
+
+// These are all just plain helper functions
+// that helped me port some stuff from Perl.
+module.exports = {
+    _p_length: _p_length,
+    _p_keys: _p_keys,
+    _p_values: _p_values,
+    _p_push: _p_push,
+    _p_2_split: _p_2_split,
+    _p_lcfirst: _p_lcfirst,
+    _p_ucfirst: _p_ucfirst,
+    _p_niceName: _p_niceName,
+    _p_quotemeta: _p_quotemeta,
+    _p_trim: _p_trim,
+    _p_can: _p_can,
+    _p_keyNameFromNiceName: _p_keyNameFromNiceName,
+    _p_isArray: _p_isArray,
+
+    expressionIsKeyPath: expressionIsKeyPath,
+    keyPathElementsForPath: keyPathElementsForPath,
+    extractDelimitedChunk: extractDelimitedChunk,
+    isBalanced: isBalanced,
+    unBalanced: unBalanced
+};
