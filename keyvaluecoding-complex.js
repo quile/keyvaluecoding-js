@@ -63,7 +63,6 @@ var __keyValueCoding = {
             var testKey = keyList[i];
             var getMethodName = testKey;
 
-            //IF::Log::debug("valueForKey called for key $key, get method should be $getMethodName");
             if ( KVU._p_can(self, getMethodName) ) {
                 v = self[getMethodName].apply( self );
                 return v;
@@ -73,7 +72,7 @@ var __keyValueCoding = {
             return self[key];
         }
 
-        return null;
+        return __keyValueCoding.__valueForUnknownKey( key );
     },
 
     __valueForKeyPathElement_onObject: function( keyPathElement, obj ) {
@@ -99,10 +98,10 @@ var __keyValueCoding = {
         if (key === "valueForKey") {
             return __keyValueCoding.__valueForKey_onObject.apply( self, [ keyPathElement.argumentValues[0], obj ] );
         }
-        return __keyValueCoding._valueForKey_onObject.apply( self, [ key, obj ] );
+        return __keyValueCoding.__valueForKey_onObject.apply( self, [ key, obj ] );
     },
 
-    __valueForKey_onObject: function(key, obj) {
+    __valueForKey_onObject: function( key, obj ) {
         var self = this;
         if ( typeof obj !== "object" ) { return null }
         if ( KVU._p_isArray( obj ) && !key.match(/^\d+$/) ) {
@@ -205,71 +204,6 @@ var __keyValueCoding = {
         return eval(expression);
     },
 
-    // convenience methods for key-value coding.  objects that
-    // implement kv coding get these methods for free but will
-    // probably have to override them.  They can be used in keypaths.
-
-    __int: function( v ) {
-        var self = this;
-        return parseInt( v, 10 );
-    },
-
-    __length: function( v ) {
-        var self = this;
-        if ( KVU._p_isArray( v ) ) {
-            return v.length;
-        }
-        return v.length;
-    },
-
-    __keys: function(v) {
-        var self = this;
-        if ( typeof v === "object" ) {
-            return v.keys();
-        }
-        return [];
-    },
-
-    __reverse: function(list) {
-        var self = this;
-        return list.reverse();
-    },
-
-    __sort: function(list) {
-        var self = this;
-        return list.sort();
-    },
-
-    __truncateStringToLength: function(length) {
-        // this is a cheesy truncator
-        if ( v.length > length ) {
-            return v.substring(0, length) + "...";
-        }
-        return v;
-    },
-
-    __commaSeparatedList: function( list ) {
-        return list.join( ", " );
-    },
-
-    // these are useful for building expressions:
-
-    __or: function(a, b) {
-        return (a || b);
-    },
-
-    __and: function(a, b) {
-        return (a && b);
-    },
-
-    __not: function(a) {
-        return !a;
-    },
-
-    __eq: function(a, b) {
-        return (a === b);
-    },
-
     // This takes a string template
     // like "foo fah fum ${twiddle.blah.zap} tiddly pom" and a language (which
     // you can use in your evaluations) and returns the string with the
@@ -298,6 +232,12 @@ var __keyValueCoding = {
             match = str.match( TEMPLATE_RE );
         }
         return str;
+    },
+
+    __valueUnknownKey: function( key ) {
+        var self = this;
+        // default behaviour is to return null
+        return null;
     }
 };
 

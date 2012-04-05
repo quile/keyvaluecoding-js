@@ -1,6 +1,6 @@
 var util = require("util");
-var kvc = require("./keyvaluecoding-complex.js").KeyValueCoding;
-var kvcs = require("./keyvaluecoding-simple.js").KeyValueCoding;
+var kvc  = require("../keyvaluecoding-complex").KeyValueCoding;
+var kvcs = require("../keyvaluecoding-simple").KeyValueCoding;
 
 function ok( condition, message ) {
     if ( condition ) {
@@ -75,8 +75,8 @@ ok( test_object.valueForKey("bacon") === "francis", "valueForKey() retrieves val
 
 ok( test_object.valueForKey("_s('donne')") === "DONNE", "valueForKey calls method" );
 ok( test_object.valueForKey("_s(donne.john)") === "JONNY", "valueForKey follows dot path and parses arguments" );
+ok( test_object.valueForKey("chaucer('geoffrey')") === "canterbury", "valueForKey passes arguments" );
 
-debugger;
 var s = test_object.stringWithEvaluatedKeyPathsInLanguage( "Hey there, ${shakespeare}, did you see ${_s(donne.john)} today?" );
 ok( s === "Hey there, william, did you see JONNY today?", "Interpolation works" );
 
@@ -96,9 +96,63 @@ ok( a.valueForKey("@1.@2.@0") === 1633, "@1.@2.@0" );
 ok( a.valueForKey("@0.keats.#") === 4, "@0.keats.#" );
 ok( a.valueForKey("@1.@2.#") === 2, "@1.@2.#" );
 
+// test additions
+
+var kva  = require("../keyvalueadditions").KeyValueAdditions;
+// force the new additions into the prototype
+for (var key in kva) {
+    Object.prototype[key] = kva[key];
+}
+
+var o = {
+    eq1: "beggar's canyon",
+    eq2: "beggar's canyon",
+    eq3: "wamp rats",
+
+    or1: true,
+    or2: false,
+    or3: false,
+
+    and1: true,
+    and2: true,
+    and3: false,
+
+    not1: true,
+    not2: false,
+
+    commas: [ "twelve", "parsecs", "kessel", "run" ],
+    truncate1: "A long time ago in a galaxy far, far away",
+    sort1: [ "luke", "leia", "yoda", "obi wan" ],
+    reverse1: [ "ewok", "wookiee", "lando" ],
+    keys1: {
+        han: "solo",
+        leia: "organa",
+        luke: "skywalker"
+    },
+    length1: [ "c3po", "r2d2" ],
+    int1: "12"
+};
+
+ok( o.valueForKey("eq(eq1, eq2)") === true, "eq" );
+ok( o.valueForKey("eq(eq2, eq3)") === false, "eq" );
+ok( o.valueForKey("or(or1, or2)") === true, "or" );
+ok( o.valueForKey("or(or2, or3)") === false, "or" );
+ok( o.valueForKey("or(or1, or3)") === true, "or" );
+ok( o.valueForKey("and(and1, and2)") === true, "and" );
+ok( o.valueForKey("and(and2, and3)") === false, "and" );
+ok( o.valueForKey("and(and1, and3)") === false, "and" );
+ok( o.valueForKey("not(not1)") === false, "not" );
+ok( o.valueForKey("not(not2)") === true, "not" );
+ok( o.valueForKey("commaSeparatedList(commas)") === "twelve, parsecs, kessel, run", "commas" );
+ok( o.valueForKey("truncateStringToLength(truncate1, 10)") === "A long tim...", "truncate" );
+ok( o.valueForKey("commaSeparatedList(sorted(sort1))") === "leia, luke, obi wan, yoda", "sorted" );
+ok( o.valueForKey("commaSeparatedList(reversed(reverse1))") === "lando, wookiee, ewok", "reversed" );
+ok( o.valueForKey("commaSeparatedList(sorted(keys(keys1)))") === "han, leia, luke", "keys" );
+ok( o.valueForKey("length(length1)") === 2, "length" );
+ok( o.valueForKey("int(int1)") === 12, "int" );
 
 
-// simple
+// test simple interface
 
 // TODO:kd - auto-extend Array
 Array.prototype.valueForKey = kvcs.valueForKey;
