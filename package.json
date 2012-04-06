@@ -1,0 +1,22 @@
+{
+    name: "keyvaluecoding",
+    version: "0.1.0",
+    author: "Kyle Dawkins <kyle@shoffle.com>",
+    description: "A native javascript implementation of Apple's NSKeyValueCoding",
+    repository: {
+        type: "git",
+        url: "https://quile@github.com/quile/keyvaluecoding-js.git",
+    },
+    keywords: [
+        "key-value coding",
+        "kvc",
+        "NSKeyValueCoding",
+        "KeyValueCoding",
+        "valueForKey"
+    ],
+    license: "MIT",
+    engine: {
+        node: ">=0.6",
+    },
+    main: "keyvaluecoding.js"
+}
