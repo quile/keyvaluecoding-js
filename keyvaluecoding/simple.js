@@ -1,9 +1,9 @@
 /* --------------------------------------------------------------------
- * keyvaluecoding-simple.js
+ * keyvaluecoding/simple.js
  * --------------------------------------------------------------------
  * The MIT License
  *
- * Copyright (c) 2010 kd
+ * Copyright (c) 2012 kd
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,7 +24,7 @@
  * THE SOFTWARE.
 **/
 
-var KVU  = require("./keyvalueutilities");
+var KVU  = require("./utilities");
 
 // This is the way it is because it was ported from
 // a couple of different places from a couple of

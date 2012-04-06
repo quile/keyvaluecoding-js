@@ -54,14 +54,14 @@ install = function( options ) {
 
     var kvc;
     if ( options['simple'] === true ) {
-        kvc = require("./keyvaluecoding-simple").KeyValueCoding;
+        kvc = require("./keyvaluecoding/simple").KeyValueCoding;
     } else {
-        kvc = require("./keyvaluecoding-complex").KeyValueCoding;
+        kvc = require("./keyvaluecoding/complex").KeyValueCoding;
     }
 
     var kva = {};
     if ( options['additions'] === true && !options['simple'] ) {
-        kva = require("./keyvalueadditions").KeyValueAdditions;
+        kva = require("./keyvaluecoding/additions").KeyValueAdditions;
     }
 
     var target = Object.prototype;

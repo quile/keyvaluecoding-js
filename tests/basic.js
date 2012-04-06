@@ -1,6 +1,6 @@
 var util = require("util");
-var kvc  = require("../keyvaluecoding-complex").KeyValueCoding;
-var kvcs = require("../keyvaluecoding-simple").KeyValueCoding;
+var kvc  = require("../keyvaluecoding/complex").KeyValueCoding;
+var kvcs = require("../keyvaluecoding/simple").KeyValueCoding;
 
 function ok( condition, message ) {
     if ( condition ) {
@@ -98,7 +98,7 @@ ok( a.valueForKey("@1.@2.#") === 2, "@1.@2.#" );
 
 // test additions
 
-var kva  = require("../keyvalueadditions").KeyValueAdditions;
+var kva  = require("../keyvaluecoding/additions").KeyValueAdditions;
 // force the new additions into the prototype
 for (var key in kva) {
     Object.prototype[key] = kva[key];

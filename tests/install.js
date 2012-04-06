@@ -30,8 +30,6 @@ function throws_ok( code, message ) {
 // var thing = new Thing();
 // require("./keyvaluecoding").install({ simple: true, target: thing });
 //
-// If you're going to use that style, you can save the return value
-// from require() and use it:
 
 // -----------------------------------
 // Only install simple KVC on Arrays
@@ -85,3 +83,8 @@ kvc.kvc(quux, { additions: true });
 ok( quux.valueForKey("sorted(thingsHanDoubts).@0") === "ancient weapons",
             "Han Solo doesn't have faith in hokey religions or ancient weapons." );
 ok( throws_ok( function () { foo.sorted() } ), "Hasn't affected other objects" );
+
+// This will install it system-wide
+kvc.install();
+ok( baz.valueForKey("sith.#") === 2, "Now it's on objects that never had it before" );
+// TODO: many more tests here.

@@ -1,5 +1,5 @@
 /* --------------------------------------------------------------------
- * keyvalueutilities.js
+ * keyvaluecoding/utilities.js
  * --------------------------------------------------------------------
  * The MIT License
  *
@@ -24,10 +24,10 @@
  * THE SOFTWARE.
  */
 
- // Goop in here is just to help with the perl -> js conversion
- // and make my life a whole lot easier.  The general idea is
- // to use this during the port and then punt it when things
- // are "working".
+// Goop in here is just to help with the perl -> js conversion
+// and make my life a whole lot easier.  The general idea is
+// to use this during the port and then punt it when things
+// are "working".
 
 var util = require("util");
 
