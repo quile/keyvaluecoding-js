@@ -72,7 +72,7 @@ var __keyValueCoding = {
             return self[key];
         }
 
-        return __keyValueCoding.__valueForUnknownKey( key );
+        return null;
     },
 
     __valueForKeyPathElement_onObject: function( keyPathElement, obj ) {
@@ -232,12 +232,6 @@ var __keyValueCoding = {
             match = str.match( TEMPLATE_RE );
         }
         return str;
-    },
-
-    __valueUnknownKey: function( key ) {
-        var self = this;
-        // default behaviour is to return null
-        return null;
     }
 };
 
