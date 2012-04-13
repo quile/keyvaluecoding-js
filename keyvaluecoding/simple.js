@@ -35,6 +35,13 @@ var __keyValueCoding = {
     __valueForKey: function( key ) {
         var self = this;
         key = key.toString();
+        if (! key in self) {
+            try {
+                return self.valueForUndefinedKey( key );
+            } catch (e) {
+                return null;
+            }
+        }
         var v = self[key];
         if ( typeof v === "function" ) {
             return v.apply( self );
@@ -75,8 +82,8 @@ var __keyValueCoding = {
 };
 
 exports.KeyValueCoding = {
-    valueForKey:        __keyValueCoding.__valueForKey,
-    valueForKeyPath:    __keyValueCoding.__valueForKeyPath,
-    setValueForKey:     __keyValueCoding.__setValueForKey,
-    setValueForKeyPath: __keyValueCoding.__setValueForKeyPath,
+    valueForKey:          __keyValueCoding.__valueForKey,
+    valueForKeyPath:      __keyValueCoding.__valueForKeyPath,
+    setValueForKey:       __keyValueCoding.__setValueForKey,
+    setValueForKeyPath:   __keyValueCoding.__setValueForKeyPath
 };

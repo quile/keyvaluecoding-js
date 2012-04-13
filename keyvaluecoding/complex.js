@@ -72,7 +72,11 @@ var __keyValueCoding = {
             return self[key];
         }
 
-        return null;
+        try {
+            return self.valueForUndefinedKey( key );
+        } catch (e) {
+            return null;
+        }
     },
 
     __valueForKeyPathElement_onObject: function( keyPathElement, obj ) {
@@ -235,17 +239,13 @@ var __keyValueCoding = {
     }
 };
 
-
-
-// we need to have a way to extend any object with KVC
-
 // This is the API that is made available to objects
 
 exports.KeyValueCoding = {
-    valueForKey:        __keyValueCoding.__valueForKey,
-    setValueForKey:     __keyValueCoding.__setValue_forKey,
-    valueForKeyPath:    __keyValueCoding.__valueForKeyPath,
-    setValueForKeyPath: __keyValueCoding.__setValue_forKeyPath,
-    stringWithEvaluatedKeyPathsInLanguage: __keyValueCoding.__stringWithEvaluatedKeyPathsInLanguage,
+    valueForKey:          __keyValueCoding.__valueForKey,
+    setValueForKey:       __keyValueCoding.__setValue_forKey,
+    valueForKeyPath:      __keyValueCoding.__valueForKeyPath,
+    setValueForKeyPath:   __keyValueCoding.__setValue_forKeyPath,
+    stringWithEvaluatedKeyPathsInLanguage: __keyValueCoding.__stringWithEvaluatedKeyPathsInLanguage
 };
 

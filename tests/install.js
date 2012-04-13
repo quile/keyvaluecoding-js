@@ -87,4 +87,11 @@ ok( throws_ok( function () { foo.sorted() } ), "Hasn't affected other objects" )
 // This will install it system-wide
 kvc.install();
 ok( baz.valueForKey("sith.#") === 2, "Now it's on objects that never had it before" );
-// TODO: many more tests here.
+
+ok( baz.valueForKey("quux.places.fingfang.foo") === null, "unknown key in keypath doesn't explode but returns null" );
+ok( baz.valueForKey("binglebangle") === null, "unknown key on object returns null" );
+baz.valueForUndefinedKey = function( key ) { return "bananas!!!" };
+
+ok( baz.valueForKey("quuz.places.fingfang.foo") === null,
+    "unknown key doesn't explode but returns null even if lead object handles unknown key" );
+ok( baz.valueForKey("binglebangle") === "bananas!!!", "Unknown key now handled by *valueForUndefinedKey*" );
