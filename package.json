@@ -1,6 +1,6 @@
 {
     "name" : "keyvaluecoding",
-    "version" : "0.1.0",
+    "version" : "0.3.0",
     "author" : "Kyle Dawkins <kyle@shoffle.com>",
     "description" : "A native javascript implementation of Apple's NSKeyValueCoding",
     "repository" : {
