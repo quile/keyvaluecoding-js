@@ -159,7 +159,7 @@ var __keyValueCoding = {
         var targetKeyPathElement = bits[1];
 
         if (currentObject && targetKeyPathElement) {
-            __keyValueCoding.__setValue_forKey_onObject.apply( self, [ v, key, currentObject ] );
+            __keyValueCoding.__setValue_forKey_onObject.apply( self, [ v, targetKeyPathElement["key"], currentObject ] );
         }
     },
 
