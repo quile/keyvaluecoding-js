@@ -1,0 +1,229 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Keyvaluecoding-js by quile</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <script src="javascripts/scale.fix.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1>Keyvaluecoding-js</h1>
+        <p>Javascript Implementation of KVC</p>
+        <p class="view"><a href="https://github.com/quile/keyvaluecoding-js">View the Project on GitHub <small>quile/keyvaluecoding-js</small></a></p>
+        <ul>
+          <li><a href="https://github.com/quile/keyvaluecoding-js/zipball/master">Download <strong>ZIP File</strong></a></li>
+          <li><a href="https://github.com/quile/keyvaluecoding-js/tarball/master">Download <strong>TAR Ball</strong></a></li>
+          <li><a href="https://github.com/quile/keyvaluecoding-js">View On <strong>GitHub</strong></a></li>
+        </ul>
+      </header>
+      <section>
+        <h2>Key-Value Coding</h2>
+
+<p>One of the greatest things about developing using the NeXT/Apple toolchain is the consistent use of something called key-value coding.  It's the kind of thing that, once you buy into its philosophy, will suddenly make a whole slew of things easier for you in ways that you never thought of before.  Every time I move to a new platform, be it Python or Javascript or Perl, I always find myself frustrated by its absence, and find myself jumping through all kinds of stupid hoops just to do things that would be dead-simple if key-value coding were available to me.</p>
+
+<p>So here are a couple of Javascript implementations of KVC that you can glom onto your objects, or even glom onto everything in your system, and KVC will be available in all its glory (well, some of its glory... see below).  At present it's designed to work with node.js, but will probably work as-is with other commonJS systems like Narwhal.  I will work on getting it packaged up for use in a browser.</p>
+
+<p>(Note: there is an almost-identical Perl implementation of key-value coding <a href="http://quile.github.com/keyvaluecoding-perl/">here</a>.)</p>
+
+<h3>Installing</h3>
+
+<pre><code>npm install keyvaluecoding
+</code></pre>
+
+<p>or check the project out from <a href="https://github.com/quile/keyvaluecoding-js">github</a> if you want the bleeding edge.</p>
+
+<p>There are a number of different ways to use key-value coding.  For definitions of what "complex", "simple" and "additions" mean, see below.</p>
+
+<p>To install <em>complex</em> KVC implementation system-wide:
+(this is the recommended way to use it, but if you don't like things messing with
+your universal object prototypes, you probably don't want this - however, this usage is
+most similar to the use of the NSKeyValueCoding category in OSX/iOS)</p>
+
+<pre><code>require("keyvaluecoding").install();
+</code></pre>
+
+<p>To install the <em>simple</em> KVC implementation system-wide:</p>
+
+<pre><code>require("keyvaluecoding").install({ simple: true });
+</code></pre>
+
+<p>To install the <em>complex</em> implementation with <em>additions</em>, system-wide:</p>
+
+<pre><code>require("keyvaluecoding").install({ additions: true });
+</code></pre>
+
+<p>To install any of these implementations on any specific object:</p>
+
+<pre><code>var thing = new Thing();
+require("keyvaluecoding").install({ simple: true, target: thing });
+</code></pre>
+
+<p>If you're going to use that style, you can save the return value
+from require() and use it:</p>
+
+<pre><code>var thing = new Thing();
+var kvc = require("keyvaluecoding");
+...
+kvc.install({ simple: true, target: thing });
+</code></pre>
+
+<p>or use jQuery style wrapping:</p>
+
+<pre><code>var thing = {};
+thing = kvc(thing);
+</code></pre>
+
+<h3>Usage</h3>
+
+<p>All implementations of KVC must support these methods:</p>
+
+<pre><code>valueForKey( &lt;key&gt; )
+valueForKeyPath( &lt;keypath&gt; )
+setValueForKey( &lt;value&gt;, &lt;key&gt; )
+setValueForKeyPath( &lt;value&gt;, &lt;keypath&gt; )
+</code></pre>
+
+<p>At present there are only two implementations available, and they should be fine for your needs.</p>
+
+<p>Once you have loading key-value coding and "installed" it into your runtime, any KVC-aware objects will now response to those methods.  ( Note: the difference between a key-path and a key is that a key-path can be an arbitrarily long dot-path of keys ).</p>
+
+<p>Here is an example session that should show how it works:</p>
+
+<pre><code>$ node
+&gt; require('keyvaluecoding').install()
+undefined
+&gt; var foo = { bar: "This is foo.bar",
+              baz: { quux: "This is foo.baz.quux", 
+                     bonk: [ "This is foo.baz.bonk.0",
+                             "and this foo.baz.bonk.1" ]
+              }
+            };
+undefined
+&gt; foo
+{ bar: 'This is foo.bar',
+  baz: 
+   { quux: 'This is foo.baz.quux',
+     bonk: 
+      [ 'This is foo.baz.bonk.0',
+        'and this foo.baz.bonk.1' ] } }
+&gt; foo.valueForKey("bar")
+'This is foo.bar'
+&gt; foo.valueForKeyPath("baz.quux")
+'This is foo.baz.quux'
+&gt; foo.valueForKeyPath("baz.bonk.1")
+'and this foo.baz.bonk.1'
+&gt; 
+</code></pre>
+
+<p>If you use the (default) <em>complex</em> implementation, valueForKey(  ) will also work for key paths, so you will never really need to use valueForKeyPath(  ):</p>
+
+<pre><code>&gt; foo.valueForKey("baz.bonk.0")
+'This is foo.baz.bonk.0'
+&gt; 
+</code></pre>
+
+<p>If a function is found rather than a property, it will be called in the context of the object it belongs to:</p>
+
+<pre><code>&gt; foo.bing = function() {
+    return [ "This is foo.bing.0", "This is foo.bing.1" ]
+}
+[Function]
+&gt; foo
+{ bar: 'This is foo.bar',
+  baz: 
+   { quux: 'This is foo.baz.quux',
+     bonk: 
+      [ 'This is foo.baz.bonk.0',
+        'and this foo.baz.bonk.1' ] },
+  bing: [Function] }
+&gt; foo.valueForKey("bing.0")
+'This is foo.bing.0'
+&gt; 
+</code></pre>
+
+<p>The <em>complex</em> implementation allows nested key-paths, which are turned into arguments:</p>
+
+<pre><code>&gt; foo.bong = function( bung ) { return bung.toUpperCase(); }
+[Function]
+&gt; foo.bong("hey")
+'HEY'
+&gt; foo.valueForKey("bong(baz.quux)")
+'THIS IS FOO.BAZ.QUUX'
+&gt; var goo = { something: function() { return foo }, name: "I'm called goo" };
+undefined
+&gt; goo
+{ something: [Function],
+  name: 'I\'m called goo' }
+&gt; goo.valueForKey("something.bong(name)")
+'I\'M CALLED GOO'
+&gt; 
+</code></pre>
+
+<p>The corresponding <em>set</em> methods, <em>setValueForKey</em> and <em>setValueForKeyPath</em> will set the value on whatever object the key/keypath resolves to.  If any part of the key or keypath returns <em>null</em>, the call will (at present) fail silently.  <em>NOTE:</em> This is not the same behaviour as Apple's NSKeyValueCoding; it's a bit more like the Clojure "thread" operator (-&gt;&gt;).</p>
+
+<h3>Additions</h3>
+
+<p>What are these "additions"?  They're only available with the <em>complex</em> implementation of KVC, and they provide a number of "special" methods that can be used in keypaths:</p>
+
+<ul>
+<li>eq(a, b)</li>
+<li>not( a )</li>
+<li>and( a, b )</li>
+<li>or( a, b )</li>
+<li>commaSeparatedList( a )</li>
+<li>truncateStringToLength( a, l )</li>
+<li>sorted( a )</li>
+<li>reversed( a )</li>
+<li>keys( a )</li>
+<li>length( a )</li>
+<li>int( a )</li>
+</ul><p>For example:</p>
+
+<pre><code>$ node
+&gt; require('keyvaluecoding').install({ additions: true });
+undefined
+&gt; var foo = { a: true, b: false, c: false };
+undefined
+&gt; foo.valueForKey("and(a, b)")
+false
+&gt; foo.valueForKey("or(a, b)")
+true
+&gt; foo.valueForKey("or(b, c)")
+false
+</code></pre>
+
+<p>Note that the arguments can be arbitrarily long key-paths.</p>
+
+<h3>See Also</h3>
+
+<p><a href="http://quile.github.com/keyvaluecoding-perl/">Nearly identical Perl implementation of key-value coding</a></p>
+      </section>
+    </div>
+    <footer>
+      <p>Project maintained by <a href="https://github.com/quile">quile</a></p>
+      <p>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></p>
+    </footer>
+    <!--[if !IE]><script>fixScale(document);</script><!--<![endif]-->
+              <script type="text/javascript">
+            var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+            document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+          </script>
+          <script type="text/javascript">
+            try {
+              var pageTracker = _gat._getTracker("UA-30714478-1");
+            pageTracker._trackPageview();
+            } catch(err) {}
+          </script>
+
+  </body>
+</html>
